@@ -1,0 +1,40 @@
+# Binaries
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+*.test
+*.out
+
+# Generated TLS certificates (use scripts/generate_certs.sh for dev)
+certs/*.key
+certs/*.crt
+certs/*.srl
+certs/*.csr
+certs/*.pem
+
+# Go workspace
+go.work
+go.work.sum
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes / data
+data/
+
+# Environment files
+.env
+.env.local

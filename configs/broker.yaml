@@ -1,0 +1,42 @@
+broker:
+  max_clients: 10000
+  max_message_size: 268435455  # 256 MB
+  max_queued_messages: 1000
+  session_expiry_seconds: 3600
+  priority_topics:
+    - "control/"
+    - "alarm/"
+    - "safety/"
+  rate_limit_msg_sec: 10000
+  rate_limit_burst: 1000
+  topic_alias_maximum: 65535
+  receive_maximum: 65535
+
+quic:
+  enabled: true
+  listen_addr: ":14567"
+  allow_0rtt: true
+
+tcp:
+  enabled: true
+  listen_addr: ":1883"
+
+tls:
+  cert_file: "certs/server.crt"
+  key_file: "certs/server.key"
+  ca_file: "certs/ca.crt"
+  mutual_tls: false
+
+auth:
+  enabled: false
+  allow_anonymous: true
+  # credentials:
+  #   admin: "password"
+
+metrics:
+  enabled: true
+  listen_addr: ":9090"
+
+logging:
+  level: "info"   # debug, info, warn, error
+  format: "json"  # json, text
