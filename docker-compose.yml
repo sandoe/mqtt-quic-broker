@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  broker:
+    build: .
+    container_name: mqtt-quic-broker
+    ports:
+      - "14567:14567/udp"  # QUIC
+      - "1883:1883/tcp"    # TCP+TLS fallback
+      - "9090:9090/tcp"    # Prometheus metrics
+    volumes:
+      - ./configs:/configs:ro
+      - ./certs:/certs:ro
+    environment:
+      - GOMAXPROCS=4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+    depends_on:
+      - broker
+    profiles:
+      - monitoring
+
+  publisher:
+    build:
+      context: .
+      dockerfile: Dockerfile.example
+      args:
+        EXAMPLE: publisher
+    container_name: example-publisher
+    depends_on:
+      - broker
+    profiles:
+      - examples
+
+  subscriber:
+    build:
+      context: .
+      dockerfile: Dockerfile.example
+      args:
+        EXAMPLE: subscriber
+    container_name: example-subscriber
+    depends_on:
+      - broker
+    profiles:
+      - examples
